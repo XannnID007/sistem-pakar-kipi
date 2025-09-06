@@ -51,11 +51,18 @@ Route::middleware('auth')->group(function () {
 use App\Http\Controllers\DiagnosisController;
 
 Route::middleware('auth')->group(function () {
-    Route::get('/diagnosa/data', [DiagnosisController::class, 'showDataForm'])->name('diagnosa.data');
-    Route::post('/diagnosa/data', [DiagnosisController::class, 'storeData'])->name('diagnosa.storeData');
-    Route::get('/diagnosa/gejala', [DiagnosisController::class, 'showGejalaForm'])->name('diagnosa.gejala');
-    Route::post('/diagnosa/proses', [DiagnosisController::class, 'prosesDiagnosa'])->name('diagnosa.proses');
-    Route::get('/diagnosa/ulang', [DiagnosisController::class, 'diagnosaUlang'])->name('diagnosa.ulang');
+    Route::get('/data', [DiagnosisController::class, 'showDataForm'])->name('data');
+    Route::post('/data', [DiagnosisController::class, 'storeData'])->name('storeData');
+
+    // Form gejala
+    Route::get('/gejala', [DiagnosisController::class, 'showGejalaForm'])->name('gejala');
+    Route::post('/proses', [DiagnosisController::class, 'prosesDiagnosa'])->name('proses');
+
+    // Diagnosa ulang
+    Route::get('/ulang', [DiagnosisController::class, 'diagnosaUlang'])->name('ulang');
+
+    // Reset session
+    Route::post('/reset', [DiagnosisController::class, 'resetSession'])->name('reset');
 });
 
 use App\Http\Controllers\PakarController;
@@ -122,13 +129,12 @@ Route::middleware(['auth', CheckRole::class . ':kepala_puskesmas'])->prefix('kep
     Route::get('/kepala/laporan-berat', [KepalaController::class, 'indexBerat'])->name('kepala.laporan.berat');
     Route::delete('/kepala/laporan-berat/{id}', [KepalaController::class, 'destroyLaporanBerat'])->name('kepala.laporan.berat.destroy');
 
+    Route::get('/statistik', [KepalaController::class, 'statistik'])->name('statistik');
+
     Route::delete('/kepala/laporan/delete/{id}', [KepalaController::class, 'destroy'])->name('kepala.laporan.delete');
     Route::prefix('kepala/laporan')->name('kepala.laporan.')->middleware('auth')->group(function () {
         Route::get('/', [KepalaController::class, 'index'])->name('index'); // daftar laporan
         Route::get('/{id}', [KepalaController::class, 'show'])->name('show'); // lihat PDF
         Route::delete('/{id}', [KepalaController::class, 'destroy'])->name('destroy'); // hapus
-
-
-
     });
 });

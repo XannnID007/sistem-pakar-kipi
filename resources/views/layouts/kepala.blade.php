@@ -46,7 +46,7 @@
                     class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (is_active_kepala(['kepala.laporan.berat'])) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
                     <i class="fas fa-file-medical-alt fa-fw w-6"></i><span class="ml-3">Laporan KIPI Berat</span>
                 </a>
-                <a href="{{ route('pakar.pengetahuan.index') }}"
+                <a href=""
                     class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 border-transparent">
                     <i class="fas fa-chart-bar fa-fw w-6"></i><span class="ml-3">Statistik</span>
                 </a>
