@@ -1,74 +1,62 @@
 @extends('layouts.kepala')
 
+@section('title', 'Laporan KIPI Ringan & Sedang')
+
 @section('content')
-<div class="container py-4">
-    <div class="card shadow-sm">
-        <div class="card-header text-white" style=" background-color:rgb(21, 140, 156)">
-            <h4 class="mb-0">Laporan KIPI Ringan & Sedang</h4>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Laporan KIPI Ringan & Sedang</h1>
+                <p class="mt-1 text-gray-600">Daftar laporan yang telah dikirim oleh pakar.</p>
+            </div>
+            <a href="{{ route('kepala.dashboard') }}"
+                class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50">
+                Kembali ke Dashboard
+            </a>
         </div>
-        <div class="card-body">
-                        @if(session('success'))
-                    <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
-                @elseif(session('error'))
-                    <div class="alert alert-danger" id="error-alert">{{ session('error') }}</div>
-                @endif
 
-                <script>
-                    setTimeout(() => {
-                        const alert = document.getElementById('success-alert') || document.getElementById('error-alert');
-                        if (alert) {
-                            alert.style.transition = 'opacity 0.5s';
-                            alert.style.opacity = '0';
-                            setTimeout(() => alert.remove(), 500);
-                        }
-                    }, 3000);
-                </script>
-                    <form method="GET" action="{{ route('kepala.laporan.index') }}" class="row g-3 mb-3">
-                    <div class="col-md-4">
-                    <input type="text" name="q" value="{{ request('q') }}" class="form-control" placeholder="Cari nama file atau tanggal">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn text-white w-100" style="background-color:rgb(21, 140, 156)" >🔍 Cari</button>
+        @if ($laporan->isEmpty())
+            <div class="text-center bg-white rounded-2xl shadow-lg p-12">
+                <i class="fas fa-folder-open fa-4x text-gray-300"></i>
+                <h3 class="mt-6 text-xl font-bold text-gray-800">Belum Ada Laporan</h3>
+                <p class="mt-2 text-gray-500">Saat ini tidak ada laporan KIPI Ringan & Sedang yang masuk.</p>
+            </div>
+        @else
+            <div class="bg-white rounded-2xl shadow-lg">
+                <ul class="divide-y divide-gray-200">
+                    @foreach ($laporan as $item)
+                        <li class="p-6 hover:bg-gray-50 transition">
+                            <div class="flex flex-col sm:flex-row justify-between items-start">
+                                <div class="flex-1 mb-4 sm:mb-0">
+                                    <div class="flex items-center">
+                                        <p class="text-base font-medium text-indigo-600 truncate">{{ $item->nama_file }}</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Tanggal Kirim:
+                                        {{ \Carbon\Carbon::parse($item->created_at)->isoFormat('D MMMM YYYY, HH:mm') }}
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0 flex items-center space-x-4">
+                                    <a href="{{ route('kepala.laporan.show', $item->id) }}" target="_blank"
+                                        class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        <i class="fas fa-file-pdf mr-2"></i> Lihat PDF
+                                    </a>
+                                    <form action="{{ route('kepala.laporan.destroy', $item->id) }}" method="POST"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="p-2 rounded-full text-gray-400 hover:bg-red-100 hover:text-red-600 transition"
+                                            title="Hapus Laporan">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </form>
-                            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama File</th>
-                        <th>Tanggal Kirim</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($laporan as $index => $item)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $item->nama_file }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i') }}</td>
-                            <td class="d-flex gap-2">
-                                <a href="{{ route('kepala.laporan.show', $item->id) }}" target="_blank" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-file-pdf"></i> Lihat PDF
-                                </a>
-
-                                <form method="POST" action="{{ route('kepala.laporan.destroy', $item->id) }}" onsubmit="return confirm('Yakin ingin menghapus laporan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash-alt"></i> Hapus
-                                    </button>
-                                </form>
-                            </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center text-muted">Belum ada laporan dari bidan.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-        </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
-</div>
 @endsection

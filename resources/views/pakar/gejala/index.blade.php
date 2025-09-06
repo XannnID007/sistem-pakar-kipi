@@ -1,64 +1,61 @@
 @extends('layouts.pakar')
 
 @section('content')
-<div class="container mb-3">
-    <h1>Gejala</h1>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Manajemen Gejala</h1>
+            <a href="{{ route('pakar.gejala.create') }}"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                <i class="fas fa-plus mr-2"></i> Tambah Gejala
+            </a>
+        </div>
 
-    {{-- Pesan sukses --}}
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+        @if (session('success'))
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
 
-    {{-- Tombol tambah gejala --}}
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-    <a href="{{ route('pakar.gejala.create') }}" class="btn btn-primary "><i class="fas fa-plus fa-lg"></i> Tambah Data</a>
-
-    {{-- Form pencarian --}}
-        <form method="GET" action="{{ route('pakar.gejala.index') }}" class="d-flex gap-2" style="max-width: 400px; width: 100%;">
-            <input 
-                type="text" 
-                name="search" 
-                placeholder="Cari gejala" 
-                value="{{ request('search') }}"
-                class="form-control"
-            >
-            <button type="submit" class="btn btn-primary">
-                Cari
-            </button>
-        </form>
+        <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
+                            Gejala</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($gejalas as $gejala)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $gejala->kode }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $gejala->nama }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="{{ route('pakar.gejala.edit', $gejala->id) }}"
+                                    class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                <form action="{{ route('pakar.gejala.destroy', $gejala->id) }}" method="POST"
+                                    class="inline-block ml-4"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada data gejala.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
-
-
-    {{-- Tabel daftar gejala --}}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Kode</th>
-                <th>Nama Gejala</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($gejalas as $gejala)
-                <tr>
-                    <td>{{ $gejala->kode }}</td>
-                    <td>{{ $gejala->nama }}</td>
-                    <td>
-                        {{-- Tombol Edit --}}
-                        <a href="{{ route('pakar.gejala.edit', $gejala->id) }}" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i> Edit</a>
-
-                        {{-- Tombol Hapus --}}
-                        <form action="{{ route('pakar.gejala.destroy', $gejala->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Yakin ingin menghapus gejala ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash-alt"></i> Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
 @endsection

@@ -1,128 +1,105 @@
 @extends('layouts.app')
 
+@section('title', 'Detail Riwayat Diagnosa')
+
 @section('content')
-<style>
-    .card {
-        padding: 20px;
-        margin-top: 85px;
-    }
-    h5, h6 {
-        font-size: 1.1rem;
-    }
-    table th, table td {
-        font-size: 13px;
-        padding: 6px 10px;
-        vertical-align: middle;
-    }
-    .btn {
-        font-size: 13px;
-        padding: 6px 14px;
-    }
-</style>
+    <div class="py-12 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="p-6 sm:p-8">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 border-gray-200">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Detail Hasil Diagnosa</h2>
+                            <p class="mt-1 text-sm text-gray-500">
+                                Diagnosa pada tanggal:
+                                {{ \Carbon\Carbon::parse($riwayat->tanggal)->isoFormat('D MMMM YYYY, HH:mm') }}
+                            </p>
+                        </div>
+                        <div class="mt-4 sm:mt-0 flex space-x-3">
+                            <a href="{{ route('riwayat.index') }}"
+                                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50">
+                                <i class="fas fa-arrow-left mr-2"></i>Kembali
+                            </a>
+                            <a href="{{ route('riwayat.cetak', $riwayat->id) }}" target="_blank"
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+                                <i class="fas fa-print mr-2"></i>Cetak
+                            </a>
+                        </div>
+                    </div>
 
-<div class="card shadow-sm mx-auto" style="max-width: 700px;">
-    <h5 class="text-center mb-3">Hasil Diagnosa Kejadian Ikutan Pasca Imunisasi (KIPI)</h5>
-    <p class="text-center text-muted mb-4">
-        Tanggal Diagnosa: {{ \Carbon\Carbon::parse($riwayat->tanggal)->locale('id')->isoFormat('D MMMM Y') }}
-    </p>
+                    @if (!empty($hasilTerbaik))
+                        <div class="mt-8 bg-indigo-50 rounded-lg p-6">
+                            <div class="flex flex-col md:flex-row items-center">
+                                <div class="text-center md:text-left">
+                                    <p class="text-5xl font-bold text-indigo-600">
+                                        {{ number_format($hasilTerbaik['cf'] * 100, 0) }}%</p>
+                                    <p class="font-semibold text-lg text-gray-800">Kemungkinan KIPI <span
+                                            class="text-indigo-700">{{ $hasilTerbaik['jenis_kipi'] }}</span></p>
+                                </div>
+                                <div class="mt-4 md:mt-0 md:ml-6 md:pl-6 md:border-l border-indigo-200 w-full">
+                                    <h4 class="font-semibold text-gray-800 flex items-center"><i
+                                            class="fas fa-comment-medical mr-2 text-indigo-600"></i>Saran Penanganan:</h4>
+                                    <p class="mt-1 text-gray-600">{{ $hasilTerbaik['saran'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
-    {{-- Tabel Data Ibu & Anak dan Hasil Diagnosa --}}
-    <table class="table table-bordered mb-4">
-        <thead class="table-light text-center align-middle">
-            <tr>
-                <th colspan="2">Data Ibu & Anak</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td><strong>Nama Anak</strong></td><td>{{ session('nama_anak', '-') }}</td></tr>
-            <tr><td><strong>Jenis Kelamin</strong></td><td>{{ session('jenis_kelamin', '-') }}</td></tr>
-            <tr>
-                <td><strong>Tanggal Lahir</strong></td>
-                <td>{{ \Carbon\Carbon::parse(session('tanggal_lahir'))->locale('id')->isoFormat('D MMMM Y') }}</td>
-            </tr>
-            <tr><td><strong>Usia Anak (bulan)</strong></td><td>{{ session('usia_anak', '-') }}</td></tr>
-            <tr><td><strong>Nama Ibu</strong></td><td>{{ session('nama_ibu', '-') }}</td></tr>
-            <tr><td><strong>Alamat</strong></td><td>{{ session('alamat', '-') }}</td></tr>
-            <tr><td><strong>Jenis Vaksin</strong></td><td>{{ session('jenis_vaksin', '-') }}</td></tr>
-            <tr><td><strong>Tempat Imunisasi</strong></td><td>{{ session('tempat_imunisasi', '-') }}</td></tr>
-            <tr>
-                <td><strong>Tanggal Imunisasi</strong></td>
-                <td>{{ \Carbon\Carbon::parse(session('tanggal_imunisasi'))->locale('id')->isoFormat('D MMMM Y') }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Ringkasan Data</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                            <div><strong class="text-gray-600 w-32 inline-block">Nama Anak:</strong>
+                                {{ session('nama_anak', $riwayat->nama_anak) }}</div>
+                            <div><strong class="text-gray-600 w-32 inline-block">Jenis Kelamin:</strong>
+                                {{ session('jenis_kelamin', $riwayat->jenis_kelamin) }}</div>
+                            <div><strong class="text-gray-600 w-32 inline-block">Tanggal Lahir:</strong>
+                                {{ \Carbon\Carbon::parse(session('tanggal_lahir', $riwayat->tanggal_lahir))->isoFormat('D MMMM YYYY') }}
+                            </div>
+                            <div><strong class="text-gray-600 w-32 inline-block">Usia Anak:</strong>
+                                {{ session('usia_anak', $riwayat->usia_anak) }} bulan</div>
+                            <div><strong class="text-gray-600 w-32 inline-block">Nama Ibu:</strong>
+                                {{ session('nama_ibu', $riwayat->nama_ibu) }}</div>
+                            <div><strong class="text-gray-600 w-32 inline-block">Jenis Vaksin:</strong>
+                                {{ session('jenis_vaksin', $riwayat->jenis_vaksin) }}</div>
+                            <div class="sm:col-span-2"><strong class="text-gray-600 w-32 inline-block">Alamat:</strong>
+                                {{ session('alamat', $riwayat->alamat) }}</div>
+                        </div>
+                    </div>
 
-    {{-- Gejala yang Dipilih --}}
-    <h6 class="mt-4 mb-2">Gejala yang Dipilih</h6>
-    @if (!empty($gejalaDipilih))
-        <table class="table table-bordered table-sm">
-            <thead class="table-light text-center">
-                <tr>
-                    <th style="width: 40px;">No</th>
-                    <th>Gejala</th>
-                    <th style="width: 120px;">Keyakinan</th>
-                </tr>
-            </thead>
-            <tbody>
-    @foreach ($gejalaDipilih as $index => $g)
-        @if ($g['cf_user'] > 0)
-        <tr>
-            <td class="text-center">{{ $index + 1 }}</td>
-            <td>{{ $g['nama'] }}</td>
-            <td class="text-center">
-                @switch($g['cf_user'])
-                    @case(1)
-                        Yakin - 1
-                        @break
-                    @case(0.5)
-                        Ragu-ragu - 0.5
-                        @break
-                    @case(0)
-                        Tidak yakin - 0
-                        @break
-                    @default
-                        {{ $g['cf_user'] }}
-                @endswitch
-            </td>
-        </tr>
-        @endif
-    @endforeach
-</tbody>
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Gejala yang Dipilih</h3>
+                        <div class="space-y-3">
+                            @forelse ($gejalaDipilih as $g)
+                                @if ($g['cf_user'] > 0)
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-800">{{ $g['nama'] }}</span>
+                                        <span
+                                            class="px-3 py-1 text-xs font-semibold rounded-full 
+                                    @if ($g['cf_user'] == 1) bg-green-100 text-green-800
+                                    @else bg-yellow-100 text-yellow-800 @endif">
+                                            @switch($g['cf_user'])
+                                                @case(1)
+                                                    Yakin
+                                                @break
 
-        </table>
-    @else
-        <p class="text-muted">Tidak ada gejala yang dipilih.</p>
-    @endif
+                                                @case(0.5)
+                                                    Ragu-ragu
+                                                @break
 
-    {{-- Hasil Diagnosa --}}
-    <h6 class="mt-3 mb-2">Hasil Diagnosa</h6>
-    @if (!empty($hasilTerbaik) && isset($hasilTerbaik['cf'], $hasilTerbaik['jenis_kipi']))
-        <table class="table table-bordered table-sm">
-            <thead class="table-light text-center">
-                <tr>
-                    <th>Hasil Diagnosa</th>
-                    <th>Saran</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-center align-middle" style="width: 200px;">
-                        <h4 class="text-success fw-bold mb-1">
-                            {{ number_format($hasilTerbaik['cf'] * 100, 0) }}%
-                        </h4>
-                        <small>Kemungkinan KIPI <strong>{{ $hasilTerbaik['jenis_kipi'] }}</strong></small>
-                    </td>
-                    <td>{{ $hasilTerbaik['saran'] ?? '-' }}</td>
-                </tr>
-            </tbody>
-        </table>
-    @else
-        <p class="text-muted">Tidak ada hasil diagnosa yang ditampilkan.</p>
-    @endif
-
-    <div class="text-center mt-4">
-        <a href="{{ route('riwayat.index') }}" class="btn btn-secondary">Kembali</a>
-        <a href="{{ route('riwayat.cetak', $riwayat->id) }}" target="_blank" class="btn btn-primary">Cetak</a>
-    </div>
-</div>
-@endsection
+                                                @default
+                                                    {{ $g['cf_user'] }}
+                                            @endswitch
+                                        </span>
+                                    </div>
+                                @endif
+                                @empty
+                                    <p class="text-gray-500">Tidak ada gejala yang dipilih untuk diagnosa ini.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endsection

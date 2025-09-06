@@ -1,52 +1,59 @@
 @extends('layouts.pakar')
 
+@section('title', 'Tambah Aturan Pengetahuan')
+
 @section('content')
-<div class="container mt-4">
-    <h3>Tambah Pengetahuan Baru</h3>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h1 class="text-2xl font-bold text-gray-800 mb-6">Formulir Aturan Pengetahuan Baru</h1>
+                <form action="{{ route('pakar.pengetahuan.store') }}" method="POST" class="space-y-6">
+                    @csrf
+                    <div>
+                        <label for="kode_aturan" class="block text-sm font-medium text-gray-700">Kode Aturan</label>
+                        {{-- Menggunakan variabel $newKodeaturan dari controller --}}
+                        <input type="text" name="kode_aturan" id="kode_aturan" value="{{ $newKodeaturan }}" readonly
+                            class="mt-1 block w-full rounded-lg border-gray-300 bg-gray-100 shadow-sm">
+                    </div>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+                    <div>
+                        <label for="kode_kipi" class="block text-sm font-medium text-gray-700">Kode KIPI</label>
+                        <input type="text" name="kode_kipi" id="kode_kipi" placeholder="Contoh: K01" required
+                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
 
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach($errors->all() as $error)
-                  <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+                    <div>
+                        <label for="kode_gejala" class="block text-sm font-medium text-gray-700">Kode & Nama Gejala</label>
+                        {{-- Menampilkan $kodenama dan menyimpan $newKodeGejala di input tersembunyi --}}
+                        <input type="text" id="kodenama_display" value="{{ $kodenama }}" readonly
+                            class="mt-1 block w-full rounded-lg border-gray-300 bg-gray-100 shadow-sm">
+                        <input type="hidden" name="kode_gejala" value="{{ $newKodeGejala }}">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="mb" class="block text-sm font-medium text-gray-700">Nilai MB</label>
+                            <input type="number" step="0.01" min="0" max="1" name="mb" id="mb"
+                                placeholder="Contoh: 0.8" required
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="md" class="block text-sm font-medium text-gray-700">Nilai MD</label>
+                            <input type="number" step="0.01" min="0" max="1" name="md" id="md"
+                                placeholder="Contoh: 0.2" required
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="pt-5 flex justify-end space-x-4">
+                        <a href="{{ route('pakar.pengetahuan.index') }}"
+                            class="px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50">Batal</a>
+                        <button type="submit"
+                            class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">Simpan
+                            Aturan</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    @endif
-
-    <form action="{{ route('pakar.pengetahuan.store') }}" method="POST">
-        @csrf
-
-        <div class="mb-3">
-            <label for="kode_aturan" class="form-label">Kode Basis</label>
-            <input type="text" name="kode_aturan" id="kode_aturan" 
-                class="form-control" value="{{ $newKodeaturan }}" readonly>
-        </div>
-
-        <input type="text" name="kode_gejala" value="{{ $newKodeGejala }}" readonly>
-<p class="text-muted">Nama gejala: {{ $kodenama }}</p>
-
-            
-        <div class="mb-3">
-            <label for="kode_kipi" class="form-label">Kode Kipi</label>
-            <input type="text" class="form-control" id="kode_kipi" name="kode_kipi" value="{{ old('kode_kipi') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="mb" class="form-label">MB (0 - 1)</label>
-            <input type="number" step="0.1" min="0" max="1" class="form-control" id="mb" name="mb" value="{{ old('mb') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="md" class="form-label">MD (0 - 1)</label>
-            <input type="number" step="0.1" min="0" max="1" class="form-control" id="md" name="md" value="{{ old('md') }}" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Simpan</button>
-    </form>
-</div>
+    </div>
 @endsection

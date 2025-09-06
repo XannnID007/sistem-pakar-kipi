@@ -3,107 +3,66 @@
 @section('title', 'Register - Sistem Pakar KIPI')
 
 @section('content')
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-sm p-4" style="max-width: 420px; width: 100%; border-radius: 12px;">
-        <h2 class="text-center mb-4 fw-light fs-4">Register</h2>
+    <div class="min-h-screen flex items-center justify-center bg-gray-50">
+        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl w-full max-w-4xl">
+            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                <h2 class="font-bold text-3xl text-gray-800 mb-4">Buat Akun Baru</h2>
+                <p class="text-sm text-gray-600 mb-8">Bergabunglah bersama kami untuk memulai diagnosa.</p>
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-            <div class="mb-3">
-                <input 
-                    type="text" 
-                    name="name" 
-                    placeholder="Nama" 
-                    value="{{ old('name') }}" 
-                    required
-                    class="form-control form-control-sm"
-                    style="font-size: 0.85rem;"
-                >
+                @if ($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('register') }}" class="space-y-6">
+                    @csrf
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                        <input id="name" type="text" name="name" value="{{ old('name') }}" required
+                            autocomplete="name"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Alamat Email</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                            autocomplete="email"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input id="password" type="password" name="password" required autocomplete="new-password"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi
+                            Password</label>
+                        <input id="password_confirmation" type="password" name="password_confirmation" required
+                            autocomplete="new-password"
+                            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Daftar
+                    </button>
+                </form>
+                <div class="mt-6 text-center text-sm">
+                    <p class="text-gray-600">Sudah punya akun?
+                        <a href="{{ route('login.form') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                            Login di sini
+                        </a>
+                    </p>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="Email" 
-                    value="{{ old('email') }}" 
-                    required
-                    class="form-control form-control-sm"
-                    style="font-size: 0.85rem;"
-                >
+            <div class="hidden md:block w-1/2">
+                <img src="{{ asset('images/bg.png') }}" alt="Ilustrasi Dokter"
+                    class="w-full h-full object-cover rounded-r-2xl">
             </div>
-
-            <div class="mb-3 position-relative">
-                <input 
-                    type="password" 
-                    name="password" 
-                    id="password"
-                    placeholder="Password" 
-                    required
-                    class="form-control form-control-sm"
-                    style="font-size: 0.85rem;"
-                >
-                <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password', 'toggleIcon1')">
-                    <i id="toggleIcon1" class="fa-solid fa-eye text-muted"></i>
-                </span>
-            </div>
-
-            <div class="mb-3 position-relative">
-                <input 
-                    type="password" 
-                    name="password_confirmation" 
-                    id="password_confirmation"
-                    placeholder="Konfirmasi Password" 
-                    required
-                    class="form-control form-control-sm"
-                    style="font-size: 0.85rem;"
-                >
-                <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword('password_confirmation', 'toggleIcon2')">
-                    <i id="toggleIcon2" class="fa-solid fa-eye text-muted"></i>
-                </span>
-            </div>
-
-            <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary btn-sm">
-                    Register
-                </button>
-            </div>
-        </form>
-
-        <div class="text-center">
-            <p class="mb-0" style="font-size: 0.85rem;">
-                Sudah punya akun? <a href="{{ route('login.form') }}">Login di sini</a>
-            </p>
         </div>
-
-        @if ($errors->any())
-            <div class="alert alert-danger mt-3">
-                <ul class="mb-0" style="padding-left: 20px;">
-                    @foreach ($errors->all() as $error)
-                        <li style="font-size: 0.85rem;">{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
     </div>
-</div>
 @endsection
-
-@push('scripts')
-<script>
-    function togglePassword(inputId, iconId) {
-        const input = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-
-        if (input.type === "password") {
-            input.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            input.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
-    }
-</script>
-@endpush

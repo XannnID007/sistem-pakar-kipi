@@ -1,173 +1,61 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full bg-gray-50">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sistem Pakar KIPI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Font Awesome (di <head>) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@yield('title', 'Sistem Pakar KIPI')</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        body {
-            background-color: #f5f9ff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgb(21, 140, 156);
-            padding: 10px 30px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 1000;
-        }
-
-        .nav-left {
-            font-weight: bold;
-            font-size: 16px;
-            color: white;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .nav-right span {
-            font-size: 13px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .nav-right a,
-        .nav-right button {
-            color: white;
-            font-weight: 600;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .nav-right a:hover,
-        .nav-right button:hover {
-            color: #b2e0e5;
-        }
-
-        main {
-            flex-grow: 1;
-            padding: 30px 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .container {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            text-align: left;
-            flex-wrap: wrap;
-        }
-
-        .welcome h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .menu {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
-
-        .menu a {
-            display: block;
-            width: 180px;
-            padding: 20px;
-            background: white;
-            border: 2px solid #2563eb;
-            border-radius: 12px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .menu a:hover {
-            background-color: #2563eb;
-            color: white;
-        }
-
-        .menu-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .illustration {
-            margin-top: 30px;
-        }
-        footer {
-            background-color: rgb(4, 95, 107);
-            color: white;
-            padding: 12px 0;
-            width: 100%;
-            text-align: center;
-            font-size: 14px;
-            position: relative;
-            user-select: none;
-        }
-    </style>
+    @vite('resources/css/app.css')
 </head>
-<body>
 
-<nav>
-    <div class="nav-left">
-        Sistem Pakar KIPI
+<body class="h-full font-sans antialiased">
+    <div id="app" class="flex flex-col min-h-screen">
+
+        <nav class="bg-white shadow-sm sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex-shrink-0">
+                        <a href="{{ auth()->check() ? route('dashboard.user') : url('/') }}"
+                            class="text-xl font-bold text-indigo-600 hover:text-indigo-700 transition">
+                            KIPI Expert
+                        </a>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        @auth
+                            <span class="text-sm font-medium text-gray-700 hidden sm:block">
+                                Halo, <span class="font-semibold">{{ Auth::user()->name }}</span>
+                            </span>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition">
+                                    Logout
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login.form') }}"
+                                class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Login</a>
+                            <a href="{{ route('register.form') }}"
+                                class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                                Register
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow">
+            @yield('content')
+        </main>
+
     </div>
-    <div class="nav-right">
-        @auth
-            <span>{{ Auth::user()->name }}</span>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: inline-flex; align-items: center;">
-                @csrf
-                <button type="submit">Logout</button>
-            </form>
-        @else
-            <a href="{{ route('login') }}">Login</a>
-            <a href="{{ route('register.form') }}">Register</a>
-        @endauth
-    </div>
-</nav>
-
-<main>
-    @yield('content')
-</main>
-
-<footer>
-    Sistem Pakar Diagnosa Gejala KIPI &copy; 2025
-</footer>
-
 </body>
+
 </html>

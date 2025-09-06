@@ -1,59 +1,69 @@
-@extends('layouts.pakar') {{-- Layout khusus untuk pakar --}}
+@extends('layouts.pakar')
+
+@section('title', 'Manajemen User')
 
 @section('content')
-<div class="max-w-6xl mx-auto py-10 px-6">
-    <h2 class="text-2xl font-semibold mb-6">Daftar User</h2>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Manajemen User</h1>
+            <p class="mt-1 text-gray-600">Kelola data pengguna yang terdaftar dalam sistem.</p>
+        </div>
 
-    {{-- Form Pencarian --}}
-    <div class="flex justify-end mb-6">
-        <form method="GET" action="{{ url('pakar/user') }}" class="flex items-center gap-2">
-            <input 
-                type="text" 
-                name="search" 
-                placeholder="Cari nama atau email..." 
-                value="{{ request('search') }}" 
-                class="border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:ring focus:border-blue-500"
-            >
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Cari
-            </button>
-        </form>
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($users as $user)
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ $user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                @if ($user->role == 'pakar') bg-blue-100 text-blue-800
+                                @elseif($user->role == 'kepala_puskesmas') bg-purple-100 text-purple-800
+                                @else bg-green-100 text-green-800 @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $user->role)) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <form action="{{ route('pakar.user.destroy', $user->id) }}" method="POST"
+                                        class="inline"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-800 transition">
+                                            <i class="fas fa-trash-alt mr-1"></i> Hapus
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-12 text-center text-sm text-gray-500">Tidak ada data user.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    {{-- Tabel User --}}
-    <div class="overflow-x-auto bg-white shadow-md rounded">
-        <table class="min-w-full text-left border border-gray-200">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-3 border-b">Nama</th>
-                    <th class="px-4 py-3 border-b">Email</th>
-                    <th class="px-4 py-3 border-b">Tanggal Daftar</th>
-                    <th class="px-4 py-3 border-b text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($users as $user)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 border-b">{{ $user->name }}</td>
-                        <td class="px-4 py-3 border-b">{{ $user->email }}</td>
-                        <td class="px-4 py-3 border-b">{{ $user->created_at->format('d M Y') }}</td>
-                        <td class="px-4 py-3 border-b text-center">
-                            <form action="{{ route('pakar.user.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');" class="inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
-                                    Hapus
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="px-4 py-3 text-center text-gray-500">Tidak ada data user.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
 @endsection

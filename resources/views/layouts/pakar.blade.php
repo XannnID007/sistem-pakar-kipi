@@ -1,178 +1,95 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full bg-gray-50">
+
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Sistem Pakar KIPI')</title>
+    <title>@yield('title', 'Dashboard Pakar - KIPI')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            background-color: #f4f6f9;
-        }
-
-        .wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 220px;
-            background-color: rgb(21, 140, 156);
-            color: white;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            padding: 20px 0;
-        }
-
-        .sidebar h4 {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background-color: #1f2d3d;
-        }
-
-        .sidebar i {
-            margin-right: 10px;
-        }
-
-        .main-content {
-            margin-left: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            width: 100%;
-        }
-
-        .with-sidebar .main-content {
-            margin-left: 220px;
-            width: calc(100% - 220px);
-        }
-
-        .topbar {
-            background-color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .content {
-            padding: 30px;
-            flex: 1;
-        }
-
-        .card-box {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 20px;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .card-box i {
-            font-size: 30px;
-            color: #3c8dbc;
-        }
-
-        footer {
-            background-color: white;
-            color: black;
-            padding: 12px;
-            text-align: center;
-            margin-top: auto;
-        }
-    </style>
+    @vite('resources/css/app.css')
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
 
-<div class="wrapper {{ Auth::check() && Auth::user()->role == 'pakar' ? 'with-sidebar' : '' }}">
-    
-    @auth
-        @if(Auth::user()->role == 'pakar')
-        <div class="sidebar">
-            <h4>Pakar KIPI</h4>
-            <a href="{{ url('dashboard/pakar') }}" class="{{ request()->path() === 'dashboard/pakar' ? 'active' : '' }}">
-            <i class="fas fa-home"></i> Dashboard
-        </a>
-            <a href="{{ route('pakar.gejala.index') }}">
-                <i class="fas fa-stethoscope"></i> Gejala
-            </a>
-            <a href="{{ route('pakar.kategori_kipi.index') }}">
-            <i class="fas fa-layer-group"></i>Kategori KIPI
-            </a>
-            <a href="{{ route('pakar.pengetahuan.index') }}">
-                <i class="fas fa-book-medical"></i> Data Pengetahuan
-            </a>
-            
-            <a href="{{ route('riwayat.kipi_berat') }}">
-                <i class="fas fa-file-medical-alt"></i> Laporan KiPI Berat
-            </a>
-            <a href="{{ route('pakar.riwayat.kipi') }}">
-            <i class="fas fa-clipboard-list"></i> Laporan Kipi Ringan dan Sedang
-            </a>
-            <a href="{{ url('pakar/pakar') }}">
-            <i class="fas fa-user-cog"></i> Pakar
-            </a>
-            <a href="{{ url('pakar/user') }}">
-            <i class="fas fa-users"></i> User
-            </a>
+<body class="h-full font-sans antialiased">
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-50">
+        <div x-show="sidebarOpen" class="fixed inset-0 z-30 bg-black/30 lg:hidden" @click="sidebarOpen = false"></div>
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0 flex flex-col">
 
-            <a href="{{ route('logout') }}"
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
-        </div>
-        @endif
-    @endauth
+            <div class="flex items-center justify-center h-16 border-b border-gray-200 flex-shrink-0">
+                <span class="text-indigo-600 text-xl font-bold">Pakar KIPI</span>
+            </div>
 
-    {{-- ... bagian atas tetap sama --}}
+            <nav class="flex-1 overflow-y-auto pt-6">
+                {{-- Rute-rute di bawah ini telah disesuaikan dengan file web.php Anda --}}
+                <a href="{{ route('pakar.dashboard') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.dashboard')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-tachometer-alt fa-fw w-6"></i><span class="ml-3">Dashboard</span>
+                </a>
+                <a href="{{ route('pakar.gejala.index') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.gejala.*')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-stethoscope fa-fw w-6"></i><span class="ml-3">Gejala</span>
+                </a>
+                <a href="{{ route('pakar.kategori_kipi.index') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.kategori_kipi.*')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-layer-group fa-fw w-6"></i><span class="ml-3">Kategori KIPI</span>
+                </a>
+                <a href="{{ route('pakar.pengetahuan.index') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.pengetahuan.*')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-book-medical fa-fw w-6"></i><span class="ml-3">Basis Pengetahuan</span>
+                </a>
+                <a href="{{ route('pakar.riwayat.kipi') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.riwayat.kipi')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-clipboard-list fa-fw w-6"></i><span class="ml-3">Laporan Ringan/Sedang</span>
+                </a>
+                <a href="{{ route('riwayat.kipi_berat') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('riwayat.kipi_berat')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-file-medical-alt fa-fw w-6"></i><span class="ml-3">Laporan KIPI Berat</span>
+                </a>
+                <a href="{{ route('pakar.user') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.user')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-users fa-fw w-6"></i><span class="ml-3">Manajemen User</span>
+                </a>
+                {{-- Route 'pakar/pakar' tidak punya nama, jadi kita pakai URL --}}
+                <a href="{{ url('pakar/pakar') }}"
+                    class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->is('pakar/pakar*')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
+                    <i class="fas fa-user-shield fa-fw w-6"></i><span class="ml-3">Manajemen Pakar</span>
+                </a>
+            </nav>
+        </aside>
 
-<div class="main-content">
-    <div class="topbar d-flex justify-content-between align-items-center px-3 py-2">
-        <div><strong>Sistem Pakar KIPI</strong></div>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="flex items-center justify-between h-16 bg-white border-b border-gray-200 px-6 flex-shrink-0">
+                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 focus:outline-none lg:hidden"><i
+                        class="fas fa-bars fa-lg"></i></button>
+                <div class="flex-1"></div>
 
-        <div class="d-flex align-items-center gap-3">
-            {{-- Hapus lonceng notifikasi --}}
-            {{-- Nama User --}}
-            @auth
-                <span>{{ Auth::user()->name }}</span>
-            @else
-                <a href="{{ route('login') }}">Login</a>
-            @endauth
+                @auth
+                    <div x-data="{ dropdownOpen: false }" class="relative">
+                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2">
+                            <span class="font-semibold text-gray-700 hidden sm:block">{{ Auth::user()->name }}</span>
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                        </button>
+                        <div x-show="dropdownOpen" @click.away="dropdownOpen = false" x-transition
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 origin-top-right">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt fa-fw w-6 mr-2"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
+
+            </header>
+            <main class="flex-1 overflow-y-auto">@yield('content')</main>
         </div>
     </div>
-
-    <div class="content">
-        @yield('content')
-    </div>
-
-    <footer>
-        Sistem Pakar Diagnosa Gejala KIPI &copy; 2025
-    </footer>
-</div>
-
-</div>
-
 </body>
+
 </html>

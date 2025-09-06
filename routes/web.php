@@ -46,20 +46,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/kepala', function () {
         return view('kepala.dashboard');
     })->middleware(CheckRole::class . ':kepala_puskesmas')->name('kepala.dashboard');
-
 });
 
 use App\Http\Controllers\DiagnosisController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/diagnosa/data', [DiagnosisController::class, 'showDataForm'])->name('diagnosa.data');
-    Route::post('/diagnosa/data', [DiagnosisController::class, 'storeData'])->name('diagnosa.data.store');
     Route::post('/diagnosa/data', [DiagnosisController::class, 'storeData'])->name('diagnosa.storeData');
     Route::get('/diagnosa/gejala', [DiagnosisController::class, 'showGejalaForm'])->name('diagnosa.gejala');
     Route::post('/diagnosa/proses', [DiagnosisController::class, 'prosesDiagnosa'])->name('diagnosa.proses');
     Route::get('/diagnosa/ulang', [DiagnosisController::class, 'diagnosaUlang'])->name('diagnosa.ulang');
-   
 });
+
 use App\Http\Controllers\PakarController;
 
 Route::get('pakar/user', [PakarController::class, 'user'])->name('pakar.user');
@@ -68,7 +66,7 @@ Route::resource('pakar/pakar', PakarController::class)->except(['show']);
 Route::get('/pakar/riwayat-diagnosa', [PakarController::class, 'riwayatDiagnosa'])->name('pakar.riwayat');
 Route::get('/pakar/laporan', [PakarController::class, 'laporan'])->name('pakar.laporan');
 Route::get('/pakar/laporan/cetak', [PakarController::class, 'cetakLaporan'])->name('pakar.cetak_laporan');
-Route::delete('/pakar/user/{id}', [UserController::class, 'destroy'])->name('pakar.user.destroy');
+Route::delete('/pakar/user/{id}', [PakarController::class, 'destroy'])->name('pakar.user.destroy');
 
 
 
@@ -83,6 +81,7 @@ use App\Http\Controllers\KategoriKipiController;
 Route::prefix('pakar')->name('pakar.')->group(function () {
     Route::resource('kategori_kipi', KategoriKipiController::class);
 });
+
 use App\Http\Controllers\PengetahuanController;
 
 Route::prefix('pakar')->name('pakar.')->group(function () {
@@ -91,7 +90,9 @@ Route::prefix('pakar')->name('pakar.')->group(function () {
     Route::post('/pengetahuan', [PengetahuanController::class, 'store'])->name('pengetahuan.store');
     Route::resource('pengetahuan', PengetahuanController::class)->except(['show']);
 });
+
 use App\Http\Controllers\RiwayatDiagnosaController;
+
 Route::get('/riwayat-diagnosa', [RiwayatDiagnosaController::class, 'index'])->name('riwayat.index');
 Route::post('/riwayat-diagnosa/simpan', [RiwayatDiagnosaController::class, 'simpan'])->name('riwayat.simpan');
 Route::get('/riwayat/kipi-berat', [RiwayatDiagnosaController::class, 'kipiBerat'])->name('riwayat.kipi_berat');
@@ -121,25 +122,13 @@ Route::middleware(['auth', CheckRole::class . ':kepala_puskesmas'])->prefix('kep
     Route::get('/kepala/laporan-berat', [KepalaController::class, 'indexBerat'])->name('kepala.laporan.berat');
     Route::delete('/kepala/laporan-berat/{id}', [KepalaController::class, 'destroyLaporanBerat'])->name('kepala.laporan.berat.destroy');
 
-Route::delete('/kepala/laporan/delete/{id}', [KepalaController::class, 'destroy'])->name('kepala.laporan.delete');
-Route::prefix('kepala/laporan')->name('kepala.laporan.')->middleware('auth')->group(function () {
-    Route::get('/', [KepalaController::class, 'index'])->name('index'); // daftar laporan
-    Route::get('/{id}', [KepalaController::class, 'show'])->name('show'); // lihat PDF
-    Route::delete('/{id}', [KepalaController::class, 'destroy'])->name('destroy'); // hapus
-    
-   
+    Route::delete('/kepala/laporan/delete/{id}', [KepalaController::class, 'destroy'])->name('kepala.laporan.delete');
+    Route::prefix('kepala/laporan')->name('kepala.laporan.')->middleware('auth')->group(function () {
+        Route::get('/', [KepalaController::class, 'index'])->name('index'); // daftar laporan
+        Route::get('/{id}', [KepalaController::class, 'show'])->name('show'); // lihat PDF
+        Route::delete('/{id}', [KepalaController::class, 'destroy'])->name('destroy'); // hapus
 
+
+
+    });
 });
-
-
-
-
-});
-
-
-
-
-
-
-
-
