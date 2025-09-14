@@ -45,7 +45,7 @@
                     class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('pakar.riwayat.kipi')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
                     <i class="fas fa-clipboard-list fa-fw w-6"></i><span class="ml-3">Laporan Ringan/Sedang</span>
                 </a>
-                <a href="{{ route('riwayat.kipi_berat') }}"
+                <a href="{{ route('pakar.riwayat.kipi_berat') }}"
                     class="flex items-center px-6 py-3 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors border-l-4 @if (request()->routeIs('riwayat.kipi_berat')) border-indigo-500 bg-indigo-50 text-indigo-600 font-semibold @else border-transparent @endif">
                     <i class="fas fa-file-medical-alt fa-fw w-6"></i><span class="ml-3">Laporan KIPI Berat</span>
                 </a>

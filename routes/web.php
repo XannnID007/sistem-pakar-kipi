@@ -2,7 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Middleware\CheckRole; // Import middleware class
+use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\DiagnosisController;
+use App\Http\Controllers\PakarController;
+use App\Http\Controllers\GejalaController;
+use App\Http\Controllers\KategoriKipiController;
+use App\Http\Controllers\PengetahuanController;
+use App\Http\Controllers\RiwayatDiagnosaController;
+use App\Http\Controllers\KepalaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,9 +23,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 Route::middleware('auth')->group(function () {
-
     // Route dashboard utama yang redirect sesuai role
     Route::get('/dashboard', function () {
         $role = auth()->user()->role;
@@ -33,9 +38,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     // Dashboard pakar
-    Route::get('/dashboard/pakar', function () {
-        return view('pakar.dashboard');
-    })->middleware(CheckRole::class . ':pakar')->name('pakar.dashboard');
+    Route::get('/dashboard/pakar', [PakarController::class, 'dashboard'])->middleware(CheckRole::class . ':pakar')->name('pakar.dashboard');
 
     // Dashboard pengguna
     Route::get('/dashboard/user', function () {
@@ -48,93 +51,75 @@ Route::middleware('auth')->group(function () {
     })->middleware(CheckRole::class . ':kepala_puskesmas')->name('kepala.dashboard');
 });
 
-use App\Http\Controllers\DiagnosisController;
-
+// Routes untuk Diagnosa (pengguna)
 Route::middleware('auth')->group(function () {
-    Route::get('/data', [DiagnosisController::class, 'showDataForm'])->name('data');
-    Route::post('/data', [DiagnosisController::class, 'storeData'])->name('storeData');
+    Route::get('/diagnosa/data', [DiagnosisController::class, 'showDataForm'])->name('diagnosa.data');
+    Route::post('/diagnosa/data', [DiagnosisController::class, 'storeData'])->name('diagnosa.storeData');
 
-    // Form gejala
-    Route::get('/gejala', [DiagnosisController::class, 'showGejalaForm'])->name('gejala');
-    Route::post('/proses', [DiagnosisController::class, 'prosesDiagnosa'])->name('proses');
+    Route::get('/diagnosa/gejala', [DiagnosisController::class, 'showGejalaForm'])->name('diagnosa.gejala');
+    Route::post('/diagnosa/proses', [DiagnosisController::class, 'prosesDiagnosa'])->name('diagnosa.proses');
 
-    // Diagnosa ulang
-    Route::get('/ulang', [DiagnosisController::class, 'diagnosaUlang'])->name('ulang');
-
-    // Reset session
-    Route::post('/reset', [DiagnosisController::class, 'resetSession'])->name('reset');
+    Route::get('/diagnosa/ulang', [DiagnosisController::class, 'diagnosaUlang'])->name('diagnosa.ulang');
+    Route::post('/diagnosa/reset', [DiagnosisController::class, 'resetSession'])->name('diagnosa.reset');
 });
 
-use App\Http\Controllers\PakarController;
+// Routes untuk Pakar
+Route::middleware(['auth', CheckRole::class . ':pakar'])->prefix('pakar')->name('pakar.')->group(function () {
+    // Dashboard pakar sudah ada di atas
 
-Route::get('pakar/user', [PakarController::class, 'user'])->name('pakar.user');
-Route::get('/dashboard/pakar', [PakarController::class, 'dashboard'])->name('pakar.dashboard');
-Route::resource('pakar/pakar', PakarController::class)->except(['show']);
-Route::get('/pakar/riwayat-diagnosa', [PakarController::class, 'riwayatDiagnosa'])->name('pakar.riwayat');
-Route::get('/pakar/laporan', [PakarController::class, 'laporan'])->name('pakar.laporan');
-Route::get('/pakar/laporan/cetak', [PakarController::class, 'cetakLaporan'])->name('pakar.cetak_laporan');
-Route::delete('/pakar/user/{id}', [PakarController::class, 'destroy'])->name('pakar.user.destroy');
+    // Manajemen User
+    Route::get('/user', [PakarController::class, 'user'])->name('user');
+    Route::delete('/user/{id}', [PakarController::class, 'destroy'])->name('user.destroy');
 
+    // Manajemen Pakar
+    Route::get('/pakar', [PakarController::class, 'index'])->name('index');
+    Route::get('/pakar/create', [PakarController::class, 'create'])->name('create');
+    Route::post('/pakar', [PakarController::class, 'store'])->name('store');
+    Route::get('/pakar/{id}/edit', [PakarController::class, 'edit'])->name('edit');
+    Route::put('/pakar/{id}', [PakarController::class, 'update'])->name('update');
+    Route::delete('/pakar/{id}', [PakarController::class, 'destroy'])->name('destroy');
 
-
-use App\Http\Controllers\GejalaController;
-
-Route::prefix('pakar')->name('pakar.')->group(function () {
+    // Gejala
     Route::resource('gejala', GejalaController::class);
-});
 
-use App\Http\Controllers\KategoriKipiController;
-
-Route::prefix('pakar')->name('pakar.')->group(function () {
+    // Kategori KIPI
     Route::resource('kategori_kipi', KategoriKipiController::class);
-});
 
-use App\Http\Controllers\PengetahuanController;
-
-Route::prefix('pakar')->name('pakar.')->group(function () {
-    Route::get('/pengetahuan', [PengetahuanController::class, 'index'])->name('pengetahuan.index');
-    Route::get('/pengetahuan/create', [PengetahuanController::class, 'create'])->name('pengetahuan.create');
-    Route::post('/pengetahuan', [PengetahuanController::class, 'store'])->name('pengetahuan.store');
+    // Pengetahuan
     Route::resource('pengetahuan', PengetahuanController::class)->except(['show']);
+
+    // Riwayat dan Laporan
+    Route::get('/riwayat-diagnosa', [PakarController::class, 'riwayatDiagnosa'])->name('riwayat');
+    Route::get('/laporan', [PakarController::class, 'laporan'])->name('laporan');
+    Route::get('/laporan/cetak', [PakarController::class, 'cetakLaporan'])->name('cetak_laporan');
+    Route::get('/riwayat/kipi', [RiwayatDiagnosaController::class, 'kipi'])->name('riwayat.kipi');
+    Route::get('/riwayat/kipi/print', [RiwayatDiagnosaController::class, 'print'])->name('riwayat.kipi.print');
+    Route::post('/riwayat/kirim', [RiwayatDiagnosaController::class, 'kirim'])->name('riwayat.kipi.kirim');
+    Route::get('/riwayat/kipi-berat', [RiwayatDiagnosaController::class, 'kipiBerat'])->name('riwayat.kipi_berat');
+    Route::get('/riwayat/kipi-berat/{id}', [RiwayatDiagnosaController::class, 'detailBerat'])->name('riwayat.berat.detail');
+    Route::post('/kipi-berat/{id}/kirim', [RiwayatDiagnosaController::class, 'kirimKIPIBerat'])->name('riwayat.berat.kirim');
 });
 
-use App\Http\Controllers\RiwayatDiagnosaController;
+// Routes untuk Riwayat Diagnosa (pengguna)
+Route::middleware('auth')->group(function () {
+    Route::get('/riwayat-diagnosa', [RiwayatDiagnosaController::class, 'index'])->name('riwayat.index');
+    Route::post('/riwayat-diagnosa/simpan', [RiwayatDiagnosaController::class, 'simpan'])->name('riwayat.simpan');
+    Route::get('/riwayat/{id}', [RiwayatDiagnosaController::class, 'show'])->name('riwayat.show');
+    Route::delete('/riwayat/{id}', [RiwayatDiagnosaController::class, 'destroy'])->name('riwayat.destroy');
+    Route::get('/riwayat/{id}/cetak', [RiwayatDiagnosaController::class, 'cetak'])->name('riwayat.cetak');
+    Route::get('/riwayat/kipi-berat', [RiwayatDiagnosaController::class, 'kipiBerat'])->name('riwayat.kipi_berat');
+});
 
-Route::get('/riwayat-diagnosa', [RiwayatDiagnosaController::class, 'index'])->name('riwayat.index');
-Route::post('/riwayat-diagnosa/simpan', [RiwayatDiagnosaController::class, 'simpan'])->name('riwayat.simpan');
-Route::get('/riwayat/kipi-berat', [RiwayatDiagnosaController::class, 'kipiBerat'])->name('riwayat.kipi_berat');
-Route::get('/pakar/riwayat/kipi', [RiwayatDiagnosaController::class, 'kipi'])->name('pakar.riwayat.kipi');
+// Routes untuk Kepala Puskesmas
+Route::middleware(['auth', CheckRole::class . ':kepala_puskesmas'])->prefix('kepala')->name('kepala.')->group(function () {
+    // Dashboard kepala sudah ada di atas
 
-Route::get('/riwayat/{id}', [RiwayatDiagnosaController::class, 'show'])->name('riwayat.show');
-Route::delete('/riwayat/{id}', [RiwayatDiagnosaController::class, 'destroy'])->name('riwayat.destroy');
-Route::get('/riwayat/{id}/cetak', [RiwayatDiagnosaController::class, 'cetak'])->name('riwayat.cetak');
-Route::get('/pakar/riwayat/kipi-berat/{id}', [RiwayatDiagnosaController::class, 'detailBerat'])->name('pakar.riwayat.berat.detail');
-Route::get('/pakar/riwayat/kipi/print', [RiwayatDiagnosaController::class, 'print'])->name('pakar.riwayat.kipi.print');
-Route::post('/pakar/riwayat/kirim', [RiwayatDiagnosaController::class, 'kirim'])->name('pakar.riwayat.kipi.kirim');
+    Route::get('/laporan', [KepalaController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/{id}', [KepalaController::class, 'show'])->name('laporan.show');
+    Route::delete('/laporan/{id}', [KepalaController::class, 'destroy'])->name('laporan.destroy');
 
-// Route KIPI Berat - PAKAR
-Route::get('/pakar/riwayat/kipi-berat/{id}', [RiwayatDiagnosaController::class, 'detailBerat'])->name('pakar.riwayat.berat.detail');
-
-Route::post('/pakar/kipi-berat/{id}/kirim', [RiwayatDiagnosaController::class, 'kirimKIPIBerat'])->name('pakar.riwayat.berat.kirim');
-
-use App\Http\Controllers\KepalaController;
-
-Route::get('/kepala/laporan-kipi', [KepalaController::class, 'laporanKIPI'])->name('kepala.laporan.kipi');
-// Route untuk kepala melihat laporan
-Route::middleware(['auth', CheckRole::class . ':kepala_puskesmas'])->prefix('kepala')->group(function () {
-    Route::get('/laporan', [KepalaController::class, 'LaporanKiPI'])->name('kepala.laporan_kipi');
-    Route::get('/laporan/{id}', [KepalaController::class, 'showLaporan'])->name('kepala.laporan.show');
-    Route::delete('/kepala/laporan/{id}', [KepalaController::class, 'destroy'])->name('kepala.laporan.destroy');
-    Route::get('/kepala/laporan', [KepalaController::class, 'laporanKIPI'])->name('kepala.laporan.index');
-    Route::get('/kepala/laporan-berat', [KepalaController::class, 'indexBerat'])->name('kepala.laporan.berat');
-    Route::delete('/kepala/laporan-berat/{id}', [KepalaController::class, 'destroyLaporanBerat'])->name('kepala.laporan.berat.destroy');
+    Route::get('/laporan-berat', [KepalaController::class, 'indexBerat'])->name('laporan.berat');
+    Route::delete('/laporan-berat/{id}', [KepalaController::class, 'destroyLaporanBerat'])->name('laporan.berat.destroy');
 
     Route::get('/statistik', [KepalaController::class, 'statistik'])->name('statistik');
-
-    Route::delete('/kepala/laporan/delete/{id}', [KepalaController::class, 'destroy'])->name('kepala.laporan.delete');
-    Route::prefix('kepala/laporan')->name('kepala.laporan.')->middleware('auth')->group(function () {
-        Route::get('/', [KepalaController::class, 'index'])->name('index'); // daftar laporan
-        Route::get('/{id}', [KepalaController::class, 'show'])->name('show'); // lihat PDF
-        Route::delete('/{id}', [KepalaController::class, 'destroy'])->name('destroy'); // hapus
-    });
 });

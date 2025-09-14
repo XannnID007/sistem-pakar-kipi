@@ -1,108 +1,115 @@
 @extends('layouts.kepala')
 
 @section('title', 'Dashboard Kepala Puskesmas')
+@section('page-title', 'Dashboard')
 
 @section('content')
-    <div class="bg-gray-50 min-h-full">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Selamat Datang, {{ optional(Auth::user())->name }}!
-                </h1>
-                <p class="mt-4 text-lg text-gray-600">
-                    Sistem Monitoring dan Analisis KIPI Puskesmas
-                </p>
-            </div>
+    <div class="p-6">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Dashboard Kepala Puskesmas</h1>
+            <p class="mt-2 text-gray-600">Selamat datang di sistem monitoring KIPI</p>
+        </div>
 
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Laporan KIPI Ringan & Sedang -->
-                <a href="{{ route('kepala.laporan.index') }}"
-                    class="group block p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-green-100 text-green-600">
-                        <i class="fas fa-clipboard-list fa-2x"></i>
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Laporan Ringan/Sedang -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100">
+                        <i class="fas fa-file-alt text-green-600 text-xl"></i>
                     </div>
-                    <h3 class="mt-6 text-xl font-bold text-gray-900 text-center">Laporan KIPI Ringan & Sedang</h3>
-                    <p class="mt-2 text-gray-600 text-center">Lihat dan kelola laporan kasus KIPI dengan tingkat ringan
-                        hingga sedang.</p>
-                    <div class="mt-6 flex items-center justify-center">
-                        <span
-                            class="inline-block font-semibold text-green-600 group-hover:text-green-800 transition-colors">
-                            Buka Laporan <i class="fas fa-arrow-right ml-2"></i>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Laporan KIPI Berat -->
-                <a href="{{ route('kepala.laporan.berat') }}"
-                    class="group block p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-100 text-red-600">
-                        <i class="fas fa-file-medical-alt fa-2x"></i>
-                    </div>
-                    <h3 class="mt-6 text-xl font-bold text-gray-900 text-center">Laporan KIPI Berat</h3>
-                    <p class="mt-2 text-gray-600 text-center">Tinjau dan monitor kasus KIPI berat yang memerlukan perhatian
-                        khusus.</p>
-                    <div class="mt-6 flex items-center justify-center">
-                        <span class="inline-block font-semibold text-red-600 group-hover:text-red-800 transition-colors">
-                            Buka Laporan <i class="fas fa-arrow-right ml-2"></i>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- NEW: Statistik & Analisis -->
-                <a href=""
-                    class="group block p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                        <i class="fas fa-chart-bar fa-2x"></i>
-                    </div>
-                    <h3 class="mt-6 text-xl font-bold text-gray-900 text-center">Statistik & Analisis</h3>
-                    <p class="mt-2 text-gray-600 text-center">Dashboard analitik untuk memantau tren dan pola kejadian KIPI.
-                    </p>
-                    <div class="mt-6 flex items-center justify-center">
-                        <span class="inline-block font-semibold text-blue-600 group-hover:text-blue-800 transition-colors">
-                            Lihat Statistik <i class="fas fa-arrow-right ml-2"></i>
-                        </span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Quick Stats Summary -->
-            <div class="mt-16 bg-white rounded-2xl shadow-lg p-8">
-                <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">Ringkasan Singkat</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="text-center p-6 bg-gray-50 rounded-xl">
-                        <div class="h-12 w-12 mx-auto bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-users text-indigo-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800">Monitoring Aktif</h3>
-                        <p class="text-gray-600 text-sm mt-2">Sistem monitoring KIPI berjalan 24/7 untuk memastikan deteksi
-                            dini</p>
-                    </div>
-                    <div class="text-center p-6 bg-gray-50 rounded-xl">
-                        <div class="h-12 w-12 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-shield-alt text-green-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800">Keamanan Vaksin</h3>
-                        <p class="text-gray-600 text-sm mt-2">Memantau dan menganalisis keamanan program imunisasi</p>
-                    </div>
-                    <div class="text-center p-6 bg-gray-50 rounded-xl">
-                        <div class="h-12 w-12 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-chart-line text-purple-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800">Analisis Lanjutan</h3>
-                        <p class="text-gray-600 text-sm mt-2">Dashboard analitik untuk mendukung pengambilan keputusan</p>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Laporan Ringan/Sedang</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                            {{ \App\Models\LaporanKepala::where('nama_file', 'like', '%Ringan_dan_Sedang%')->count() }}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- System Info -->
-            <div class="mt-8 text-center">
-                <p class="text-sm text-gray-500">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Sistem Pakar KIPI - Monitoring Kejadian Ikutan Pasca Imunisasi
-                </p>
-                <p class="text-xs text-gray-400 mt-1">
-                    Last Updated: {{ now()->format('d M Y, H:i') }} WIB
-                </p>
+            <!-- Total Laporan Berat -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Laporan KIPI Berat</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                            {{ \App\Models\LaporanKepala::where('nama_file', 'like', '%KIPI_Berat%')->count() }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Kasus Bulan Ini -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100">
+                        <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Kasus Bulan Ini</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                            {{ \App\Models\RiwayatDiagnosa::whereMonth('created_at', now()->month)->count() }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kasus Hari Ini -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100">
+                        <i class="fas fa-calendar-day text-yellow-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Kasus Hari Ini</p>
+                        <p class="text-2xl font-bold text-gray-900">
+                            {{ \App\Models\RiwayatDiagnosa::whereDate('created_at', today())->count() }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Laporan Terbaru</h3>
+            </div>
+            <div class="p-6">
+                @php
+                    $recentReports = \App\Models\LaporanKepala::latest()->take(5)->get();
+                @endphp
+
+                @if ($recentReports->count() > 0)
+                    <div class="space-y-4">
+                        @foreach ($recentReports as $report)
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="p-2 rounded-full bg-indigo-100">
+                                        <i class="fas fa-file-pdf text-indigo-600"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h4 class="font-medium text-gray-900">{{ $report->nama_file }}</h4>
+                                        <p class="text-sm text-gray-500">{{ $report->created_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                                <a href="{{ route('kepala.laporan.show', $report->id) }}"
+                                    class="text-indigo-600 hover:text-indigo-800 font-medium">
+                                    Lihat
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <i class="fas fa-inbox text-gray-400 text-4xl mb-4"></i>
+                        <p class="text-gray-500">Belum ada laporan tersedia</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

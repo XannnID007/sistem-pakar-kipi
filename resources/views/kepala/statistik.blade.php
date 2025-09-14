@@ -85,51 +85,6 @@
                 <canvas id="trenBulananChart" width="400" height="200"></canvas>
             </div>
 
-            <!-- Distribusi Kategori KIPI -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Distribusi Kategori KIPI</h3>
-                <canvas id="kategoriChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-
-        <!-- Charts Row 2 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Distribusi Usia -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Distribusi Berdasarkan Usia</h3>
-                <canvas id="usiaChart" width="400" height="200"></canvas>
-            </div>
-
-            <!-- Distribusi Jenis Kelamin -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Distribusi Jenis Kelamin</h3>
-                <canvas id="genderChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-
-        <!-- Top Vaksin & Status Penanganan -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Top 5 Vaksin -->
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Top 5 Vaksin Terkait KIPI</h3>
-                <div class="space-y-3">
-                    @forelse($topVaksin as $index => $vaksin)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <span
-                                    class="inline-flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-800 text-sm font-semibold rounded-full mr-3">
-                                    {{ $index + 1 }}
-                                </span>
-                                <span class="font-medium text-gray-700">{{ $vaksin->jenis_vaksin }}</span>
-                            </div>
-                            <span class="text-sm font-semibold text-indigo-600">{{ $vaksin->jumlah_kasus }} kasus</span>
-                        </div>
-                    @empty
-                        <p class="text-gray-500 text-center py-4">Belum ada data vaksin</p>
-                    @endforelse
-                </div>
-            </div>
-
             <!-- Status Penanganan -->
             <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Penanganan</h3>
